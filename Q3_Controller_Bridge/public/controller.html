@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="de">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <title>Fenster-Spiel Controller</title>
+    <style>
+        :root {
+            font-family: system-ui, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #111;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            padding: 12px 16px 4px;
+            text-align: center;
+            font-weight: 700;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        #status {
+            font-size: 12px;
+            opacity: .8;
+            font-weight: 400;
+        }
+
+        #playerPosition {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+
+        .pad {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            padding: 16px;
+            touch-action: none;
+        }
+
+        /* Pfeilbereich */
+        .arrow-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            width: 100%;
+            max-width: 500px;
+            /* verhindert Überbreite auf Tablets */
+        }
+
+        /* Pfeil-Buttons */
+        .arrow-row button {
+            width: 100%;
+            height: 120px;
+            /* ← Höhe der Buttons */
+            font-size: 48px;
+            /* ← Emoji-Größe */
+            padding: 0;
+            border: none;
+            border-radius: 24px;
+            background: #222;
+            color: #eee;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* bei SEHR kleinen Handys (iPhone SE etc.) automatisch kleiner */
+        @media (max-width: 360px) {
+            .arrow-row button {
+                height: 100px;
+                font-size: 40px;
+            }
+        }
+
+        button:active {
+            transform: scale(.97);
+        }
+
+        .fire {
+            font-size: 20px;
+            padding: 18px 32px;
+            width: 80%;
+            max-width: 360px;
+            background: #294;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        footer {
+            padding: 10px 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div>🎮 Fenster-Controller</div>
+        <div id="status">Verbinde…</div>
+        <div id="playerPosition"></div>
+    </header>
+
+    <div class="pad" id="pad">
+        <div class="arrow-row">
+            <button data-emit="left">⬅️</button>
+            <button data-emit="right">➡️</button>
+        </div>
+
+        <button class="fire" data-emit="action">
+            🟢 START / FIRE
+        </button>
+    </div>
+
+    <footer>
+        <input id="name" placeholder="Dein Name (optional)" />
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        //        const socket = io(); // gleiche Origin
+        const socket = io("https://controller.qdreigaming.org");
+        const statusEl = document.getElementById('status');
+        const nameEl = document.getElementById('name');
+        const positionEl = document.getElementById('playerPosition');
+
+        // Slot aus URL auslesen
+        const params = new URLSearchParams(window.location.search);
+        const slotParam = params.get('slot'); // "1" oder "2" (oder null)
+
+        // Spieler-ID bestimmen (Default = 1)
+        const playerId = (slotParam === '2') ? '2' : '1';
+
+        // Hinweistext anzeigen
+        if (playerId === '1') {
+            positionEl.textContent = 'Du spielst OBEN';
+        } else {
+            positionEl.textContent = 'Du spielst UNTEN';
+        }
+
+        function vibrate(ms = 30) {
+            if (navigator.vibrate) navigator.vibrate(ms);
+        }
+
+        function identify() {
+            socket.emit('identify', {
+                name: nameEl.value?.trim() || null,
+                player: playerId
+            });
+        }
+
+        socket.on('connect', () => {
+            statusEl.textContent = 'Verbunden ✔';
+            identify();
+        });
+
+        socket.on('disconnect', () => {
+            statusEl.textContent = 'Getrennt…';
+        });
+
+        nameEl.addEventListener('change', identify);
+
+        const REP_MS = 80;
+        let holdTimer = null;
+
+        function send(type, value) {
+            socket.emit('control', {
+                type,
+                value,
+                player: playerId,
+                name: nameEl.value || null
+            });
+        }
+
+        function startHold(ev, value) {
+            ev.preventDefault();
+            vibrate(10);
+            send('press', value);
+            holdTimer = setInterval(() => send('hold', value), REP_MS);
+        }
+
+        function endHold(ev, value) {
+            ev?.preventDefault();
+            clearInterval(holdTimer);
+            holdTimer = null;
+            send('release', value);
+        }
+
+        document.querySelectorAll('[data-emit]').forEach(btn => {
+            const value = btn.dataset.emit;
+
+            // Touch
+            btn.addEventListener('touchstart', e => startHold(e, value), { passive: false });
+            btn.addEventListener('touchend', e => endHold(e, value), { passive: false });
+            btn.addEventListener('touchcancel', e => endHold(e, value), { passive: false });
+
+            // Maus (für Tests am PC)
+            btn.addEventListener('mousedown', e => startHold(e, value));
+            btn.addEventListener('mouseup', e => endHold(e, value));
+            btn.addEventListener('mouseleave', e => endHold(e, value));
+        });
+    </script>
+</body>
+
+</html>

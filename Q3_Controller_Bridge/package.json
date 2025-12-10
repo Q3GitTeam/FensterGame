@@ -1,0 +1,16 @@
+{
+    "name": "scratch-controller-bridge",
+    "version": "1.0.0",
+    "description": "Bridge between smartphone web controllers and a local Scratch game via keyboard events",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "author": "Holger + ChatGPT",
+    "license": "MIT",
+    "dependencies": {
+        "express": "^4.21.0",
+        "robotjs": "^0.6.0",
+        "socket.io": "^4.8.0"
+    }
+}
