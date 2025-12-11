@@ -26,11 +26,9 @@ io.on("connection", (socket) => {
     console.log("Neuer Controller verbunden:", socket.id);
 
     socket.data.player = 1;
-    socket.data.name = null;
 
     socket.on("identify", (data) => {
         if (data?.player) socket.data.player = parseInt(data.player, 10) || 1;
-        if (data?.name) socket.data.name = String(data.name);
         console.log("IDENTIFY", socket.id, "->", socket.data);
     });
 

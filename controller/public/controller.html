@@ -129,20 +129,15 @@
         </div>
 
         <button class="fire" data-emit="action">
-            🟢 START / FIRE
+            🟢 START / STOP
         </button>
     </div>
 
-    <footer>
-        <input id="name" placeholder="Dein Name (optional)" />
-    </footer>
-
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        //        const socket = io(); // gleiche Origin
-        const socket = io("https://controller.qdreigaming.org");
+        const socket = io(); // Debug Code für Browser Test auf diesem Rechner
+        // const socket = io("https://controller.qdreigaming.org"); // Production code
         const statusEl = document.getElementById('status');
-        const nameEl = document.getElementById('name');
         const positionEl = document.getElementById('playerPosition');
 
         // Slot aus URL auslesen
@@ -163,13 +158,6 @@
             if (navigator.vibrate) navigator.vibrate(ms);
         }
 
-        function identify() {
-            socket.emit('identify', {
-                name: nameEl.value?.trim() || null,
-                player: playerId
-            });
-        }
-
         socket.on('connect', () => {
             statusEl.textContent = 'Verbunden ✔';
             identify();
@@ -179,8 +167,6 @@
             statusEl.textContent = 'Getrennt…';
         });
 
-        nameEl.addEventListener('change', identify);
-
         const REP_MS = 80;
         let holdTimer = null;
 
@@ -189,7 +175,6 @@
                 type,
                 value,
                 player: playerId,
-                name: nameEl.value || null
             });
         }
 
