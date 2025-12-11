@@ -135,8 +135,8 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
-        const socket = io(); // Debug Code für Browser Test auf diesem Rechner
-        // const socket = io("https://controller.qdreigaming.org"); // Production code
+        // const socket = io(); // Debug Code für Browser Test auf diesem Rechner
+        const socket = io("https://controller.qdreigaming.org"); // Production code
         const statusEl = document.getElementById('status');
         const positionEl = document.getElementById('playerPosition');
 

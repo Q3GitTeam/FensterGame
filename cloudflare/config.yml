@@ -1,5 +1,5 @@
 tunnel: controller-tunnel
-credentials-file: /Users/admin/.cloudflared/0d0fa415-86c3-4f36-8b10-593d5d8c2340.json
+credentials-file: <PATH_TO_HOME>/.cloudflared/controller-tunnel.json
 
 ingress:
   - hostname: controller.qdreigaming.org
