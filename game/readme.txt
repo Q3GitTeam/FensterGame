@@ -7,7 +7,7 @@ Recreate the static html packaged version of the game:
     - resolution is 640 x 320 px
     - NO turbo mode!
     - export plain html file
-- move resulting pong.html in this folder
+- move resulting Pong.html in this folder
 - push it to the git
 - pull it on the production computer(s)
 
@@ -16,4 +16,6 @@ ON PRODUCTION COMPUTER:
 
 Update the game:
 - pull from git
-- call restart.sh script in this folder
+- exit running firefox
+- start firefox in kiosk mode again with this comand:
+    firefox --kiosk <projectdir>/game/Pong.html
