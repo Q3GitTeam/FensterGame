@@ -4,12 +4,14 @@ Recreate the static html packaged version of the game:
 
 - open https://packager.turbowarp.org/
 - load game file pong.sb3 form this folder
+- import the settings from file turbowarp-packager-settings.json in this folder
+    or check settings manually:
     - resolution is 640 x 320 px
     - NO turbo mode!
     - export plain html file
-- move resulting Pong.html in this folder
-- push it to the git
-- pull it on the production computer(s)
+- move resulting Pong.html into this folder
+- push to the git
+- pull on the production computer(s)
 
 
 ON PRODUCTION COMPUTER:
