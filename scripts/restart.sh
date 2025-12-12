@@ -1,4 +1,6 @@
 #!/bin/bash
+export DISPLAY=:0
+export XAUTHORITY=/home/ich/.Xauthority
 set -e
 
 URL="file:///home/ich/projects/FensterGame/game/pong.html"
