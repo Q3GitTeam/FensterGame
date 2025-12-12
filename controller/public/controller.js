@@ -1,7 +1,6 @@
 (() => {
     const socket = io(window.location.origin);
 
-    const statusEl = document.getElementById("status");
     const positionEl = document.getElementById("playerPosition");
 
     // Slot aus URL auslesen
@@ -12,7 +11,7 @@
     const playerId = (slotParam === "2") ? "2" : "1";
 
     // Hinweistext anzeigen
-    positionEl.textContent = (playerId === "1") ? "Du spielst OBEN" : "Du spielst UNTEN";
+    positionEl.textContent = "NICHT Verbunden ❌";
 
     function vibrate(ms = 30) {
         if (navigator.vibrate) navigator.vibrate(ms);
@@ -41,12 +40,12 @@
     }
 
     socket.on("connect", () => {
-        statusEl.textContent = "Verbunden ✔";
+        positionEl.textContent = (playerId === "1") ? "Du spielst OBEN" : "Du spielst UNTEN";
         setTimeout(autoStartOnce, 150);
     });
 
     socket.on("disconnect", () => {
-        statusEl.textContent = "Getrennt…";
+        positionEl.textContent = "NICHT Verbunden ❌";
     });
 
     function startHold(ev, value) {
