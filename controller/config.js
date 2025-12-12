@@ -8,12 +8,12 @@ module.exports = {
         1: {
             left: "a",
             right: "d",
-            action: "up",   // schaltet KI Player oben an / aus
+            start_top: "up",   // schaltet KI Player oben an / aus
         },
         2: {
             left: "left",
             right: "right",
-            action: "down",   // schaltet KI Player oben an / aus
+            start_bottom: "down",   // schaltet KI Player oben an / aus
         }
     },
 
