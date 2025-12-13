@@ -148,6 +148,14 @@ app.get(`/game/${pongFile}`, (req, res) => {
 // alle anderen Assets normal statisch
 app.use("/game", express.static(gameDir));
 
+app.get("/_whoami", (req, res) => {
+    res.json({
+        host: require("os").hostname(),
+        pid: process.pid,
+        time: new Date().toISOString(),
+    });
+});
+
 // Startseite (optional)
 app.get("/", (req, res) => {
     res.send(`

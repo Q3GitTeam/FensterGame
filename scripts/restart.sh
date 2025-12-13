@@ -24,6 +24,25 @@ nohup node index.js > controller.log 2>&1 &
 echo "Starte Cloudflare Tunnel..."
 nohup cloudflared tunnel run controller-tunnel > tunnel.log 2>&1 &
 
+echo "Prüfe, ob Domain auf diesen Rechner zeigt..."
+
+EXPECTED_HOST="$(hostname)"
+RESPONSE_HOST="$(curl -s https://controller.qdreigaming.org/_whoami | jq -r '.host' 2>/dev/null)"
+
+if [ -z "$RESPONSE_HOST" ]; then
+  echo "❌ FEHLER: Tunnel antwortet nicht (keine _whoami-Antwort)"
+  echo "→ Wahrscheinlich ist der Tunnel auf einem anderen Rechner aktiv."
+  exit 1
+fi
+
+if [ "$RESPONSE_HOST" != "$EXPECTED_HOST" ]; then
+  echo "❌ FEHLER: Tunnel zeigt auf '$RESPONSE_HOST', nicht auf '$EXPECTED_HOST'"
+  echo "→ Bitte Tunnel auf anderen Rechnern stoppen (z.B. Mac)."
+  exit 1
+fi
+
+echo "✅ Tunnel zeigt korrekt auf diesen Rechner ($EXPECTED_HOST)"
+
 echo "Starte Firefox im Kiosk..."
 nohup firefox --kiosk "$URL" > firefox.log 2>&1 &
 
