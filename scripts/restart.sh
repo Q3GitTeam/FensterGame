@@ -3,7 +3,9 @@ export DISPLAY=:0
 export XAUTHORITY=/home/ich/.Xauthority
 set -e
 
-URL="file:///home/ich/projects/FensterGame/game/Pong.html"
+URL="http://localhost:3000/game/Pong.html" 
+# served by node and injected controller connection and key emulation
+
 # Wenn Screen 2 rechts vom Laptop liegt: X = Breite von Screen 1 (z.B. 1920)
 SCREEN2_X=1920
 SCREEN2_Y=0
