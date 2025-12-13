@@ -1,5 +1,11 @@
 (() => {
-    const socket = io(window.location.origin);
+    const socket = io(window.location.origin, {
+        reconnection: true,
+        reconnectionAttempts: Infinity,
+        reconnectionDelay: 300,
+        reconnectionDelayMax: 1500,
+        timeout: 5000
+    });
 
     const positionEl = document.getElementById("playerPosition");
 
@@ -34,9 +40,7 @@
         if (didAutoStart) return;
         didAutoStart = true;
 
-        // slot=1 -> Pfeil hoch, slot=2 -> Pfeil runter (als serverseitiges Mapping)
-        const startKey = (playerId === "1") ? "start_top" : "start_bottom";
-        send("tap", startKey);
+        send("tap", "start");
     }
 
     socket.on("connect", () => {
