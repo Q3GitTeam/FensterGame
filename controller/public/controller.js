@@ -55,15 +55,11 @@
     function startHold(ev, value) {
         ev.preventDefault();
         vibrate(10);
-        send("press", value);
-        holdTimer = setInterval(() => send("hold", value), REP_MS);
+        send('press', value);
     }
-
     function endHold(ev, value) {
         ev?.preventDefault();
-        clearInterval(holdTimer);
-        holdTimer = null;
-        send("release", value);
+        send('release', value);
     }
 
     document.querySelectorAll("[data-emit]").forEach((btn) => {
