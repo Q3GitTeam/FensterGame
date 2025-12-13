@@ -28,22 +28,23 @@ echo "Prüfe, ob Domain auf diesen Rechner zeigt..."
 
 EXPECTED_HOST="$(hostname)"
 
-WHOAMI_JSON="$(curl -fsS --max-time 5 https://controller.qdreigaming.org/_whoami 2>/dev/null || true)"
+WHOAMI_JSON=""
+for i in {1..20}; do
+  WHOAMI_JSON="$(curl -fsS --max-time 3 https://controller.qdreigaming.org/_whoami 2>/dev/null || true)"
+  if [ -n "$WHOAMI_JSON" ]; then
+    break
+  fi
+  echo "…warte auf Tunnel ($i/20)"
+  sleep 1
+done
 
 if [ -z "$WHOAMI_JSON" ]; then
   echo "❌ FEHLER: Keine Antwort von https://controller.qdreigaming.org/_whoami"
-  echo "   → Tunnel läuft evtl. nicht / DNS zeigt woanders hin / Internet weg."
+  echo "   → Tunnel ist nicht online oder DNS zeigt woanders hin."
   exit 1
 fi
 
-if command -v jq >/dev/null 2>&1; then
-  RESPONSE_HOST="$(printf '%s' "$WHOAMI_JSON" | jq -r '.host' 2>/dev/null || true)"
-else
-  echo "❌ FEHLER: jq ist nicht installiert. Installiere mit: sudo apt install -y jq"
-  echo "   Antwort war:"
-  echo "$WHOAMI_JSON"
-  exit 1
-fi
+RESPONSE_HOST="$(printf '%s' "$WHOAMI_JSON" | jq -r '.host' 2>/dev/null || true)"
 
 if [ -z "$RESPONSE_HOST" ] || [ "$RESPONSE_HOST" = "null" ]; then
   echo "❌ FEHLER: _whoami ist keine gültige JSON-Antwort oder enthält keinen .host"
@@ -54,7 +55,6 @@ fi
 
 if [ "$RESPONSE_HOST" != "$EXPECTED_HOST" ]; then
   echo "❌ FEHLER: Tunnel zeigt auf '$RESPONSE_HOST', nicht auf '$EXPECTED_HOST'"
-  echo "   → Stoppe cloudflared auf anderen Rechnern (z.B. Mac) und starte hier neu."
   exit 1
 fi
 
