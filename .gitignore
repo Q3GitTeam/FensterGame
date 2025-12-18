@@ -1,0 +1,32 @@
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# --- Node / Controller ---
+controller/node_modules/
+controller/*.log
+controller/**/*.log
+npm-debug.log*
+yarn-error.log*
+
+# --- Logs (global, falls später mehr dazukommt) ---
+*.log
+
+# --- Cloudflare / Secrets ---
+cloudflare/*.json
+cloudflare/*.pem
+.cloudflared/
+
+# --- Build / Runtime ---
+dist/
+build/
+.tmp/
+.cache/
+
+# --- Optional: lokal erzeugte Assets ---
+game/*.tmp
+game/*.bak
