@@ -75,4 +75,12 @@ sleep 3
 wmctrl -r "Firefox" -e "0,${SCREEN2_X},${SCREEN2_Y},-1,-1" || true
 wmctrl -r "Firefox" -b add,fullscreen || true
 
+# Firefox fokussieren
+wmctrl -a "Firefox" || true
+sleep 0.3
+
+# einmal klicken (User-Gesture) -> Audio wird freigegeben
+xdotool mousemove $((SCREEN2_X+200)) $((SCREEN2_Y+200)) click 1 || true
+# alternativ: xdotool key space
+
 echo "OK – alles läuft."
